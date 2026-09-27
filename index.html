@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kartik Tyagi Small Finance Bank</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="side">
+      <div class="brand">
+        <img src="assets/bank-logo.jpg" alt="" class="brand-mark" />
+        <div>
+          <div class="brand-name">Kartik Tyagi</div>
+          <div class="brand-sub">Small Finance Bank</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Main">
+        <div class="menu-group">
+          <a href="#dashboard" data-view="dashboard">Overview</a>
+          <a href="#accounts" data-view="accounts">Accounts</a>
+          <a href="#create" data-view="create">Open an account</a>
+        </div>
+        <div class="menu-group">
+          <div class="menu-label">Counter</div>
+          <a href="#deposit" data-view="deposit">Deposit</a>
+          <a href="#withdraw" data-view="withdraw">Withdrawal</a>
+          <a href="#transfer" data-view="transfer">Transfer</a>
+        </div>
+        <div class="menu-group">
+          <div class="menu-label">Enquiry</div>
+          <a href="#balance" data-view="balance">Balance</a>
+          <a href="#history" data-view="history">Statement</a>
+        </div>
+        <div class="menu-group">
+          <div class="menu-label">Help desk</div>
+          <a href="#assistant" data-view="assistant">Assistant</a>
+        </div>
+      </nav>
+
+      <div class="side-foot">
+        <span id="server-dot" class="dot"></span>
+        <span id="server-status">Connecting…</span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="head">
+        <div>
+          <div class="eyebrow" id="page-eyebrow">Overview</div>
+          <h1 id="page-title">Book position</h1>
+        </div>
+        <div class="head-date" id="today"></div>
+      </header>
+
+      <!-- Overview -->
+      <section id="view-dashboard" class="view">
+        <div class="position">
+          <div class="position-main">
+            <div class="label">Total deposits held</div>
+            <div class="figure" id="stat-balance">—</div>
+          </div>
+          <dl class="position-facts">
+            <div><dt>Accounts</dt><dd id="stat-accounts">—</dd></div>
+            <div><dt><i class="key sav"></i>Savings</dt><dd id="stat-savings">—</dd></div>
+            <div><dt><i class="key cur"></i>Current</dt><dd id="stat-current">—</dd></div>
+          </dl>
+        </div>
+        <div class="split" aria-hidden="true">
+          <span class="split-sav" id="split-sav"></span>
+          <span class="split-cur" id="split-cur"></span>
+        </div>
+
+        <div class="block">
+          <div class="block-head">
+            <h2>Account register</h2>
+            <a href="#create" class="link">Open an account →</a>
+          </div>
+          <div id="dashboard-list"></div>
+        </div>
+      </section>
+
+      <!-- All accounts -->
+      <section id="view-accounts" class="view" hidden>
+        <div class="toolbar">
+          <input id="account-filter" type="search" placeholder="Filter by name or account number" autocomplete="off" />
+          <div class="seg" role="group" aria-label="Account type">
+            <button type="button" data-filter="ALL" class="on">All</button>
+            <button type="button" data-filter="SAVINGS">Savings</button>
+            <button type="button" data-filter="CURRENT">Current</button>
+          </div>
+        </div>
+        <div id="all-accounts"></div>
+      </section>
+
+      <!-- Open account -->
+      <section id="view-create" class="view" hidden>
+        <div class="desk">
+          <form id="form-create" class="form" autocomplete="off">
+            <fieldset class="choice">
+              <legend>Account type</legend>
+              <label class="choice-item">
+                <input type="radio" name="create-type" value="1" checked />
+                <span>
+                  <strong>Savings</strong>
+                  <small>For individuals. Withdrawals limited to the balance held.</small>
+                </span>
+              </label>
+              <label class="choice-item">
+                <input type="radio" name="create-type" value="2" />
+                <span>
+                  <strong>Current</strong>
+                  <small>For business use. Can run below zero up to an agreed overdraft.</small>
+                </span>
+              </label>
+            </fieldset>
+
+            <label class="field">
+              <span>Name of account holder</span>
+              <input id="create-name" type="text" required />
+            </label>
+
+            <div class="row">
+              <label class="field">
+                <span>Opening deposit</span>
+                <div class="amount"><i>₹</i><input id="create-balance" type="number" min="0" step="0.01" required /></div>
+              </label>
+              <label class="field" id="overdraft-field" hidden>
+                <span>Overdraft limit</span>
+                <div class="amount"><i>₹</i><input id="create-overdraft" type="number" min="0" step="0.01" /></div>
+              </label>
+            </div>
+
+            <div class="actions">
+              <button type="submit" class="btn">Open account</button>
+            </div>
+          </form>
+
+          <aside class="slip" id="create-result">
+            <div class="slip-empty">
+              <p>The account number is issued automatically in sequence (KTB001, KTB002…) once the account is opened.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Deposit -->
+      <section id="view-deposit" class="view" hidden>
+        <div class="desk">
+          <form id="form-deposit" class="form" autocomplete="off">
+            <label class="field">
+              <span>Account number</span>
+              <input id="deposit-acc" class="acc-input mono" type="text" list="acc-list" required placeholder="KTB001" />
+              <em class="who" data-for="deposit-acc"></em>
+            </label>
+            <label class="field">
+              <span>Amount</span>
+              <div class="amount"><i>₹</i><input id="deposit-amount" type="number" min="0.01" step="0.01" required /></div>
+            </label>
+            <div class="actions"><button type="submit" class="btn">Post deposit</button></div>
+          </form>
+          <aside class="slip" id="deposit-result">
+            <div class="slip-empty"><p>A receipt appears here after the deposit is posted.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Withdraw -->
+      <section id="view-withdraw" class="view" hidden>
+        <div class="desk">
+          <form id="form-withdraw" class="form" autocomplete="off">
+            <label class="field">
+              <span>Account number</span>
+              <input id="withdraw-acc" class="acc-input mono" type="text" list="acc-list" required placeholder="KTB001" />
+              <em class="who" data-for="withdraw-acc"></em>
+            </label>
+            <label class="field">
+              <span>Amount</span>
+              <div class="amount"><i>₹</i><input id="withdraw-amount" type="number" min="0.01" step="0.01" required /></div>
+            </label>
+            <div class="actions"><button type="submit" class="btn">Post withdrawal</button></div>
+          </form>
+          <aside class="slip" id="withdraw-result">
+            <div class="slip-empty"><p>A receipt appears here after the withdrawal is posted.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Transfer -->
+      <section id="view-transfer" class="view" hidden>
+        <div class="desk">
+          <form id="form-transfer" class="form" autocomplete="off">
+            <div class="row">
+              <label class="field">
+                <span>From account</span>
+                <input id="transfer-from" class="acc-input mono" type="text" list="acc-list" required placeholder="KTB001" />
+                <em class="who" data-for="transfer-from"></em>
+              </label>
+              <label class="field">
+                <span>To account</span>
+                <input id="transfer-to" class="acc-input mono" type="text" list="acc-list" required placeholder="KTB002" />
+                <em class="who" data-for="transfer-to"></em>
+              </label>
+            </div>
+            <label class="field">
+              <span>Amount</span>
+              <div class="amount"><i>₹</i><input id="transfer-amount" type="number" min="0.01" step="0.01" required /></div>
+            </label>
+            <div class="actions"><button type="submit" class="btn">Transfer funds</button></div>
+          </form>
+          <aside class="slip" id="transfer-result">
+            <div class="slip-empty"><p>A receipt appears here after the transfer is posted.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- Balance -->
+      <section id="view-balance" class="view" hidden>
+        <form id="form-balance" class="lookup" autocomplete="off">
+          <input id="balance-acc" class="acc-input mono" type="text" list="acc-list" required placeholder="Account number, e.g. KTB001" />
+          <button type="submit" class="btn">Look up</button>
+        </form>
+        <div id="balance-result"></div>
+      </section>
+
+      <!-- Statement -->
+      <section id="view-history" class="view" hidden>
+        <form id="form-history" class="lookup" autocomplete="off">
+          <input id="history-acc" class="acc-input mono" type="text" list="acc-list" required placeholder="Account number, e.g. KTB001" />
+          <button type="submit" class="btn">Show statement</button>
+        </form>
+        <div id="history-result"></div>
+      </section>
+      <!-- Assistant -->
+      <section id="view-assistant" class="view" hidden>
+        <div class="assist">
+          <div class="assist-main">
+            <div class="transcript" id="chat-log" aria-live="polite">
+              <div class="chat-intro" id="chat-intro">
+                <p>Ask about accounts in plain language, or ask the assistant to prepare a transaction. It reads from the same records as the rest of the console. Deposits, withdrawals and transfers are only posted after you press Confirm.</p>
+                <div class="tries">
+                  <button type="button" class="try">Which accounts have less than ₹5,000?</button>
+                  <button type="button" class="try">What is the total held in current accounts?</button>
+                  <button type="button" class="try">Show recent activity on KTB002</button>
+                  <button type="button" class="try">Transfer ₹2,000 from KTB001 to KTB002</button>
+                </div>
+              </div>
+            </div>
+            <form id="chat-form" class="composer" autocomplete="off">
+              <textarea id="chat-input" rows="2" maxlength="1500" placeholder="Type a question or instruction…"></textarea>
+              <div class="composer-bar">
+                <button type="button" class="link-btn" id="chat-clear">Clear conversation</button>
+                <button type="submit" class="btn" id="chat-send">Send</button>
+              </div>
+            </form>
+          </div>
+          <aside class="assist-side">
+            <dl class="facts">
+              <div><dt>Model</dt><dd id="ai-model">—</dd></div>
+              <div><dt>Provider</dt><dd id="ai-provider">—</dd></div>
+            </dl>
+            <div class="setup" id="ai-setup" hidden>
+              <strong>Not set up yet</strong>
+              <p>Copy <code>ai.properties.example</code> to <code>ai.properties</code>, paste a free Groq API key into it, and restart <code>java BankServer</code>.</p>
+            </div>
+            <p class="side-note">Replies are generated by an AI model and can be wrong. Figures come from the bank records through the server, but check the confirmation card before posting anything.</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <datalist id="acc-list"></datalist>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

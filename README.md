@@ -199,6 +199,35 @@ CURRENT,ACC1002,Rahul,3000.0,2000.0
 
 ---
 
+## 🌐 Web UI
+
+```bash
+javac *.java
+java BankServer
+```
+Open http://localhost:8080. The web UI uses the same `Bank` class and `accounts.txt` as the console app.
+
+---
+
+## 🤖 Generative AI Banking Assistant
+
+The **Assistant** page lets staff ask questions in plain language ("which accounts have less than ₹5,000?") and prepare transactions ("transfer ₹2,000 from KTB001 to KTB002").
+
+**How it works**
+- The browser sends the message to `POST /api/assistant` on `BankServer`. The API key stays on the server and never reaches the browser.
+- `AssistantService` calls an OpenAI-compatible chat-completions REST API with **tool (function) calling**. The model gets four tools: `list_accounts`, `get_account`, `get_statement`, `propose_transaction`. It must call these to get figures, so balances come from `Bank`, not from the model's guesswork.
+- `propose_transaction` **does not move money**. It returns a confirmation card to the UI, and the transaction is only posted through the normal `/api/deposit`, `/api/withdraw` or `/api/transfer` routes when a person presses **Confirm**.
+- `Json.java` is a small JSON reader/writer, so the project still needs no external libraries (works on Java 8+).
+
+**Setup (free)**
+1. Get a free API key from [Groq](https://console.groq.com/keys) (no card needed).
+2. Copy `ai.properties.example` to `ai.properties` and paste the key into `AI_API_KEY`.
+3. Restart `java BankServer`. The console prints which provider and model the assistant is using.
+
+`ai.properties` is in `.gitignore`, so the key is never committed. Google Gemini, OpenRouter, or a local [Ollama](https://ollama.com) model (fully offline, no key) also work — see the commented options in `ai.properties.example`.
+
+---
+
 ## 👨‍💻 Author
 
 **Kartik Tyagi**  

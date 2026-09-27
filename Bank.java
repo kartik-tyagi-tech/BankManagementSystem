@@ -12,13 +12,13 @@ public class Bank {
 
     public Bank() {
         accounts = new HashMap<>();
-        accountCounter = 1000;
+        accountCounter = 0;
         loadFromFile(); // Load saved data on startup
     }
 
     // Generate unique account number
     private String generateAccountNumber() {
-        return "ACC" + (++accountCounter);
+        return String.format("KTB%03d", ++accountCounter);
     }
 
     // Create Savings Account
@@ -80,6 +80,11 @@ public class Bank {
         for (Map.Entry<String, Account> entry : accounts.entrySet()) {
             System.out.println(entry.getValue());
         }
+    }
+
+    // Used by the web UI only — does not change banking rules
+    public java.util.Collection<Account> getAllAccounts() {
+        return accounts.values();
     }
 
     // FILE I/O — Save all account data to file (persistent storage)
